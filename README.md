@@ -1,6 +1,8 @@
 # ESP32-Deauther
 
-A WiFi deauthentication tool built for ESP32 microcontrollers with a modern web interface. This project demonstrates WiFi security concepts and network analysis capabilities.
+ESP32-based WiFi deauthentication tool with web interface. Capable of disconnecting
+  2.4GHz WiFi networks using IEEE 802.11 deauth frames. Includes network scanning,
+  attack statistics, and modular architecture. Educational/security research use only.
 
 ## DISCLAIMER
 
