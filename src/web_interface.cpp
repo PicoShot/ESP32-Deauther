@@ -6,6 +6,7 @@
 
 WebServer server(80);
 int num_networks;
+unsigned long start_time;
 
 String getEncryptionType(wifi_auth_mode_t encryptionType);
 
@@ -824,6 +825,10 @@ void handle_root() {
                             <div class="stat-value" id="uptime-count">0</div>
                             <div class="stat-label">Uptime (m)</div>
                         </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="temp-count">--</div>
+                            <div class="stat-label">Temp (°C)</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -904,6 +909,7 @@ void handle_root() {
         const networkCountEl = document.getElementById('network-count');
         const eliminatedCountEl = document.getElementById('eliminated-count');
         const uptimeCountEl = document.getElementById('uptime-count');
+        const tempCountEl = document.getElementById('temp-count');
         const timeEl = document.getElementById('time');
         
         document.addEventListener('DOMContentLoaded', () => {
@@ -911,6 +917,7 @@ void handle_root() {
             startClock();
             updateStats();
             setupUptime();
+            setupTemperatureUpdates();
             
             const logoText = document.querySelector('.logo-text');
             typeWriter(logoText.textContent, logoText);
@@ -1217,6 +1224,28 @@ void handle_root() {
             }, 1000);
         }
         
+        function setupTemperatureUpdates() {
+            updateTemperature();
+            setInterval(updateTemperature, 5000);
+        }
+        
+        function updateTemperature() {
+            fetch('/api/temperature')
+            .then(response => {
+                if(!response.ok) throw new Error('Failed to get temperature');
+                return response.json();
+            })
+            .then(data => {
+                if (data.temperature !== undefined) {
+                    tempCountEl.textContent = Math.round(data.temperature);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating temperature:', error);
+                tempCountEl.textContent = '--';
+            });
+        }
+        
         function startClock() {
             setInterval(() => {
                 const now = new Date();
@@ -1285,6 +1314,15 @@ void handle_api_stats() {
   server.send(200, "application/json", response);
 }
 
+void handle_api_temperature() {
+  DynamicJsonDocument doc(128);
+  doc["temperature"] = temperatureRead();
+  
+  String response;
+  serializeJson(doc, response);
+  server.send(200, "application/json", response);
+}
+
 void handle_deauth() {
   int wifi_number = server.arg("net_num").toInt();
   uint16_t reason = server.arg("reason").toInt();
@@ -1319,6 +1357,9 @@ void handle_rescan() {
 }
 
 void start_web_interface() {
+  start_time = millis();
+  
+  // web routes
   server.on("/", handle_root);
   server.on("/deauth", HTTP_POST, handle_deauth);
   server.on("/deauth_all", HTTP_POST, handle_deauth_all);
@@ -1328,6 +1369,7 @@ void start_web_interface() {
   // API endpoints
   server.on("/api/networks", handle_api_networks);
   server.on("/api/stats", handle_api_stats);
+  server.on("/api/temperature", handle_api_temperature);
 
   server.begin();
 }
