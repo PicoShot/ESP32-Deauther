@@ -6,8 +6,8 @@
 // your led pin (if you have one)
 //#define LED 2
 
-//enable serial debug
-#define SERIAL_DEBUG
+//enable serial debug (if needed)
+// #define SERIAL_DEBUG
 
 #define CHANNEL_MAX 13
 #define NUM_FRAMES_PER_DEAUTH 16
