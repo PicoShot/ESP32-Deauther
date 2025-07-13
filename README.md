@@ -56,7 +56,7 @@ A WiFi deauthentication tool built for ESP32 microcontrollers with a modern web 
 1. **Power on the ESP32** - It will create a WiFi Access Point
 2. **Connect to the AP:**
    - **SSID:** `ESP32-Deauther` (default)
-   - **Password:** `12345678` (default)
+   - **Password:** `1234+abc` (default)
 3. **Open web browser** and navigate to: `http://192.168.4.1`
 4. **Scan for networks** using the "Scan Networks" button
 5. **Select target network** from the list
@@ -69,7 +69,7 @@ Edit `include/definitions.h` to customize:
 
 ```cpp
 #define AP_SSID "ESP32-Deauther"    // Access Point name
-#define AP_PASS "12345678"          // Access Point password
+#define AP_PASS "1234+abc"          // Access Point password
 #define CHANNEL_MAX 13              // Maximum WiFi channel
 // #define LED 2                    // Uncomment to enable LED (if you have one)
 // #define SERIAL_DEBUG             // Uncomment for serial output
